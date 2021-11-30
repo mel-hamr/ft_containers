@@ -1,29 +1,23 @@
-#include "avl_tree.h"
-
-
+// #include "avl_tree.h"
+#include <iostream>
+#include <map>
 int main()
 {
-    avl *first;
-    avl *node;
+  std::map<int,char> m;
 
+  m[0] = 'i';
+  m[5] = 'o';
+  m[95] = 'y';
+  m[3] = 's';
+  m[1] = 'b';
 
+  std::map<int,char>::iterator it = m.begin();
+  std::map<int,char>::iterator it1 = m.end();
 
-    first = new_node("first",10);
+  std::cout << it->second << "\n";
+  it++;
+  std::cout << it->second << "\n";
 
-
-    first = insert_new_node(first,new_node("seconde",5));
-    first = insert_new_node(first,new_node("seconde",12));
-    first = insert_new_node(first,new_node("seconde",6));
-    first = insert_new_node(first,new_node("seconde",13));
-    first = insert_new_node(first,new_node("seconde",1));
-    first = insert_new_node(first,new_node("seconde",11));
-
-
-
-    // std::cout << first->right->right->_value;
-    // std::cout << first->left->right->_value;
-
-    print_tree(first);
-
+  
 
 }

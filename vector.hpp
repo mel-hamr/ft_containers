@@ -1,195 +1,154 @@
+#ifndef VECTOR_HPP
+#define VECTOR_HPP
 
 #include<iostream>
-
-template < class T, class Alloc = std::allocator<T> >
-class vector
+#include "iterator.hpp"
+#include "reverse_iterator.hpp"
+namespace ft
 {
+	template < class T, class Alloc = std::allocator<T> >
+	class vector
+	{
 
-	public:
-		typedef Alloc allocator_type;
-		typedef T   value_type;
-		typedef typename allocator_type::reference reference;
-		typedef typename allocator_type::const_reference    const_reference;
-		typedef typename allocator_type::pointer pointer;
-		typedef typename allocator_type::const_pointer  const_pointer;
-	private:
-		allocator_type _Alloc;
-		T* _Containers;
-		int _size;
-		int _capacity;
-	public:
-		explicit vector (const allocator_type& alloc = allocator_type()) : _Containers(nullptr) , _size(0) , _capacity(0){;};
-		explicit vector (size_t n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
-		{
-			_capacity = n;
-			_size = 0;
-			_Containers = _Alloc.allocate(n);
-			while (_size < _capacity)
+		public:
+			typedef Alloc allocator_type;
+			typedef T   value_type;
+			typedef typename allocator_type::reference reference;
+			typedef typename allocator_type::const_reference    const_reference;
+			typedef typename allocator_type::pointer pointer;
+			typedef typename allocator_type::const_pointer  const_pointer;
+			typedef typename ft::VectorIterator<T> iterator;
+			typedef size_t size_type;
+		private:
+			allocator_type _Alloc;
+			T* _Container;
+			int _size;
+			int _capacity;
+		public:
+			explicit vector (const allocator_type& alloc = allocator_type()) :_Alloc(alloc), _Container(nullptr) , _size(0) , _capacity(0)
 			{
-				_Containers[_size] = val;
+				;
+			}
+			explicit vector (size_t n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
+			{
+				_capacity = n;
+				_size = 0;
+				_Container = _Alloc.allocate(n);
+				while (_size < _capacity)
+				{
+					_Container[_size] = val;
+					_size++;
+				}
+			}
+			void	push_back(T	val)
+			{
+				if(_size >= _capacity)
+				{
+					if(_size == 0)
+					{
+						_capacity = 1;
+						_Container = _Alloc.allocate(1);
+					}
+					else
+					{
+						T* tmp;
+						_capacity = _capacity * 2;
+						tmp = _Alloc.allocate(_capacity);
+						for(int i= 0 ; i < _size; i++)
+							tmp[i] = _Container[i];
+						delete [] _Container;
+						_Container = tmp;
+					}
+				}
+				_Container[_size] = val;
 				_size++;
 			}
-		}
-		~vector();
-};
+			void pop_back()
+			{
+				_Alloc.destroy(&_Container[_size - 1]);
+				_size -= 1;
+			}
+			void reserve(size_type n)
+			{
+				if(n > _capacity)
+				{
+					_capacity = n;
+					T	*new_container = _Alloc.allocate(_capacity);
+					for (size_t i = 0; i < _size; i++)
+					{
+						new_container[i] = _Container[i];
+					}
+					delete [] _Container;
+					_Container = new_container;
+				}
+			}
+			void resize (size_type n, value_type val = value_type())
+			{
+				if(n > _capacity)
+				{
 
-template <class Iterator>
-class iterator_traits
-{
-	typedef typename	Iterator::difference_type	difference_type; 
-	typedef typename	Iterator::value_type		value_type;
-	typedef	typename	Iterator::pointer			pointer;
-	typedef typename	Iterator::reference			reference;
-	typedef typename	Iterator::iterator_category	iterator_category;
-};
+				}
+				else
+				{
+					while (_size > n)
+					{
+						_size--;
+						_Alloc.destroy(&_Container[_size]);
+					}
+				}
+			}
+			iterator begin()
+			{
+				iterator it(&_Container[0]);
+				return (it);
+			}
+			iterator end()
+			{
+				iterator it(&_Container[_size]);
+				return (it);
+			}
+			size_type size() const
+			{
+				return (_size);
+			}
 
-template <class	T>
-class iterator_traits<T*>
-{
-	typedef	ptrdiff_t									difference_type; 
-	typedef T											value_type;
-	typedef	T*											pointer;
-	typedef T&											reference;
-	typedef typename	std::random_access_iterator_tag	iterator_category;
-};
+			size_type max_size() const
+			{
+				return (_Alloc.max_size());
+			}
+			size_type capacity() const
+			{
+				return (_capacity);
+			}
+			T& operator[](size_type n)
+			{
+				return ((_Container[n]));
+			}
 
-template <class T> 
-class iterator_traits<const T*>
-{
-	typedef	ptrdiff_t									difference_type; 
-	typedef	T											value_type;
-	typedef	const T*									pointer;
-	typedef	T&											reference;
-	typedef typename	std::random_access_iterator_tag	iterator_category;
-};
+			const T& operator[](size_type n) const
+			{
+				return ((_Container[n]));
+			}
+			T& back()
+			{
+				return (_Container[_size - 1]);
+			}
 
-template <class Category, class T, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
-struct iterator {
-	typedef T			value_type;
-	typedef Distance	difference_type;
-	typedef Pointer		pointer;
-	typedef Reference	reference;
-	typedef Category	iterator_category;
-};
+			const T& back() const
+			{
+				return (_Container[_size - 1]);
+			}
+			bool empty() const
+			{
+				if (!_size)
+					return (true);
+				return false;
+			}
+			~vector()
+			{
+					;
+			}
+	};
 
-template <typename T>
-class VectorIterator : public iterator<std::input_iterator_tag , T >
-{
-	private :
-		T *p;
-	public:
-		VectorIterator(T* x) :p(x) {}
-		VectorIterator(const VectorIterator& mit) : p(mit.p) {}
-		T*	base()const 
-		{
-			return (*p);
-		}
-		T* operator+(T n) const
-		{
-			return (p + n);
-		}
-		T* operator-(T n) const
-		{
-			return (p - n);
-		}
-		T* operator++()
-		{
-			p++;
-			return (p);
-		};
-		T* operator++(int)
-		{
-			T *temp;
-
-			temp = p;
-			p++;
-			return(temp);
-		}
-		T* operator--()
-		{
-			p--;
-			return (p);
-		};
-		T* operator-=(T	n)
-		{
-			p = p - n;
-			return (p);
-		};
-		T* operator+=(T	n)
-		{
-			p = p + n;
-			return (p);
-		};
-		T* operator--(int)
-		{
-			T	*temp;
-
-			temp = p;
-			p--;
-			return(temp);
-		}
-		bool operator==(const VectorIterator& rhs) const
-		{
-			return p==rhs.p;
-		}
-		bool operator!=(const VectorIterator& rhs) const
-		{
-			return p!=rhs.p;
-		}
-		int& operator*()
-		{
-			return *p;
-		}
-		T	operator[](int n)
-		{
-			return (p[n]);
-		}
-};
-
-template <class Iterator>
-class reverse_VectorIterator
-{
-	typedef typename	iterator_traits<Iterator>::iterator_category	iterator_category;
-	typedef typename	iterator_traits<Iterator>::value_type		value_type;
-	typedef typename	iterator_traits<Iterator>::difference_type	difference_type; 
-	typedef	typename	iterator_traits<Iterator>::pointer			pointer;
-	typedef typename	iterator_traits<Iterator>::reference			reference;
-	typedef				Iterator	iterator_type;
-	
-	private :
-	iterator_type	i;
-	public:
-	reverse_VectorIterator()
-	{
-		// p=nullptr;
-	}
-	reverse_VectorIterator (iterator_type it)
-	{
-		*this = it;
-	}
-		// VectorIterator(T* x) :p(x) {}
-		// VectorIterator(const VectorIterator& mit) : p(mit.p) {}
-		// VectorIterator& operator++()
-		// {
-		// 	++p;
-		// 	return *this;
-		// }
-		// VectorIterator operator++(int)
-		// {
-		// 	VectorIterator tmp(*this);
-		// 	++p;
-		// 	return tmp;
-		// }
-		// bool operator==(const VectorIterator& rhs) const
-		// {
-		// 	return p==rhs.p;
-		// }
-		// bool operator!=(const VectorIterator& rhs) const
-		// {
-		// 	return p!=rhs.p;
-		// }
-		// int& operator*()
-		// {
-		// 	return *p;
-		// }
-};
+}
+#endif

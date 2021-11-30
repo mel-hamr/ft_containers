@@ -3,7 +3,6 @@
 
 #include <iostream>
 
-#include <iostream>
 
 class Node {
    public:
@@ -101,18 +100,18 @@ Node *insertNode(Node *node, std::string key,int value)
 				height(node->right));
 	int balanceFactor = getBalanceFactor(node);
 	if (balanceFactor > 1) {
-		if (key < node->left->key) {
+		std::cout << "FB =" << balanceFactor<<  "\n";
+		if (value < node->left->value) {
 		return rightRotate(node);
-		} else if (key > node->left->key) {
+		} else if (value > node->left->value) {
 		node->left = leftRotate(node->left);
 		return rightRotate(node);
-
 		}
 	}
 	if (balanceFactor < -1) {
-		if (key > node->right->key) {
+		if (value > node->right->value) {
 		return leftRotate(node);
-		} else if (key < node->right->key) {
+		} else if (value < node->right->value) {
 		node->right = rightRotate(node->right);
 		return leftRotate(node);
 		}
@@ -141,5 +140,46 @@ void printTree(Node *root, std::string indent, bool last)
 	printTree(root->right, indent, true);
   }
 }
-
+// Delete a node
+Node *deleteNode(Node *root, int value) {
+  // Find the node and delete it
+  if (root == NULL)
+    return root;
+  if (value < root->value)
+    root->left = deleteNode(root->left, value);
+  else if (value > root->value)
+    root->right = deleteNode(root->right, value);
+  else {
+    if ((root->left == NULL) ||
+      (root->right == NULL)) {
+      Node *temp = root->left ? root->left : root->right;
+      if (temp == NULL) {
+        temp = root;
+        root = NULL;
+      } else
+        *root = *temp;
+      free(temp);
+    } else {
+      Node *temp = nodeWithMimumValue(root->right);
+      root->value = temp->value;
+      root->right = deleteNode(root->right,
+                   temp->value);
+    }
+  }
+Node *search(Node *root,int val)
+{
+	if(root == NULL)
+		return (NULL);
+	if(root->value == val)
+		return (root);
+	if(root->value < val)
+	{
+		root = search(root->right,val);
+	}
+	if(root->value > val)
+	{
+		root = search(root->left,val);
+	}
+	return(root);
+}
 #endif
