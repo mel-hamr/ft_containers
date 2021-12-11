@@ -1,30 +1,35 @@
-#include "vector.hpp"
-#include "map.hpp"
 #include <iostream>
-#include <vector>
+#include "vector/vector.hpp"
+#include "map/map.hpp"
+#include <map>
+// #include <vector>
+// #include <utility>
+// using namespace std
 
 int main()
 {
-    ft::vector<int> v;
-    v.push_back(1);
-    v.push_back(2);
-    v.push_back(3);
-    v.push_back(4);
 
-    v.resize(0);
-    std::cout << " capacity : " << v.capacity() << std::endl;
-    ft::vector<int>::iterator it = v.begin();
-    ft::vector<int>::iterator it1 = v.end();
+	ft::map<int, int> ma;
 
-    for (; it != it1; it++)
-    {
-        std::cout << *it <<" ";
-    }   
-    // std::cout << std::endl << v.capacity() << "\n";
-    // v.push_back(2);
-    // v.push_back(3);
-    // v.push_back(4);
-    // std::vector<int>::iterator it;
-    // it = v.begin();
-    // std::cout <<  it->first  ;
+	ft::map<int, int>::iterator it;
+	ft::map<int, int>::iterator it_e;
+	ma.insert(ft::pair<int, int>(20, 6));
+	ma.insert(ft::pair<int, int>(15, 7));
+	ma.insert(ft::pair<int, int>(30, 8));
+	ma.insert(ft::pair<int, int>(10, 9));
+	ma.insert(ft::pair<int, int>(17, 10));
+	ma.insert(ft::pair<int, int>(8, 11));
+	it = ma.end();
+	it--;
+	std::cout << " key :" << it->first << " seconde : " << it->second << "\n";
+	ma.erase(20);
+	ma.printf_map();
+
+	// ma.insert(it,ft::pair<int, int>(13, 11));
+	// it = ma.begin();
+	// it++;
+	// it++;
+	// it = ma.begin();
+
+	return 0;
 }
